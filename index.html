@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport de Monitoring Système</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .timestamp {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #4a5568;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 1.3em;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .status-ok {
+            background: #48bb78;
+            color: white;
+        }
+
+        .status-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .process-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .process-table th {
+            background: #2d3748;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .process-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .process-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .network-card {
+            background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .web-service {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .web-service:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .favicon {
+            width: 32px;
+            height: 32px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            background: #cbd5e0;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .process-table {
+                font-size: 0.85em;
+            }
+
+            .process-table th, .process-table td {
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px 15px;
+            }
+
+            header h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Rapport de Monitoring Système</h1>
+            <p class="timestamp">Généré le: 16 octobre 2025 à 14:32:45</p>
+        </header>
+
+        <div class="content">
+            <!-- Informations générales -->
+            <section class="section">
+                <h2 class="section-title">🖥️ Informations Générales</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">Nom d'hôte</div>
+                        <div class="info-value">serveur-exemple-01</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Noyau Linux</div>
+                        <div class="info-value">6.1.0-13-amd64</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Uptime</div>
+                        <div class="info-value">12 jours 8h 23m</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Matériel et alimentation -->
+            <section class="section">
+                <h2 class="section-title">🔌 État du Matériel</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">Température CPU</div>
+                        <div class="info-value">54°C <span class="status-badge status-ok">OK</span></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Température GPU</div>
+                        <div class="info-value">62°C <span class="status-badge status-ok">OK</span></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Alimentation</div>
+                        <div class="info-value"><span class="status-badge status-ok">Secteur</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mémoire -->
+            <section class="section">
+                <h2 class="section-title">💾 Mémoire Vive</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">Mémoire Totale</div>
+                        <div class="info-value">16.0 GB</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Mémoire Utilisée</div>
+                        <div class="info-value">9.8 GB</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Mémoire Libre</div>
+                        <div class="info-value">6.2 GB</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 61%;">61% utilisée</div>
+                </div>
+            </section>
+
+            <!-- Disques -->
+            <section class="section">
+                <h2 class="section-title">💿 État des Disques</h2>
+                <div class="info-card" style="margin-bottom: 15px;">
+                    <div class="info-label">/ (Racine)</div>
+                    <div class="info-value">245 GB / 500 GB</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 49%;">49%</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">/home</div>
+                    <div class="info-value">187 GB / 1000 GB</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 19%;">19%</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Processus -->
+            <section class="section">
+                <h2 class="section-title">⚙️ Processus Actifs</h2>
+                <table class="process-table">
+                    <thead>
+                        <tr>
+                            <th>PID</th>
+                            <th>Utilisateur</th>
+                            <th>CPU %</th>
+                            <th>Mémoire %</th>
+                            <th>Processus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1234</td>
+                            <td>root</td>
+                            <td>2.5%</td>
+                            <td>1.8%</td>
+                            <td>systemd</td>
+                        </tr>
+                        <tr>
+                            <td>2456</td>
+                            <td>www-data</td>
+                            <td>15.3%</td>
+                            <td>8.2%</td>
+                            <td>apache2</td>
+                        </tr>
+                        <tr>
+                            <td>3789</td>
+                            <td>mysql</td>
+                            <td>8.7%</td>
+                            <td>12.4%</td>
+                            <td>mysqld</td>
+                        </tr>
+                        <tr>
+                            <td>4521</td>
+                            <td>user</td>
+                            <td>3.2%</td>
+                            <td>4.6%</td>
+                            <td>python3</td>
+                        </tr>
+                        <tr>
+                            <td>5834</td>
+                            <td>root</td>
+                            <td>1.1%</td>
+                            <td>0.9%</td>
+                            <td>sshd</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Réseau -->
+            <section class="section">
+                <h2 class="section-title">🌐 État du Réseau</h2>
+                <div class="network-card">
+                    <div class="info-label">Interface: eth0</div>
+                    <div class="info-value">Adresse IP: 192.168.1.100</div>
+                    <div style="margin-top: 10px;">
+                        <span style="color: #48bb78;">↓ 1.2 GB reçu</span> | 
+                        <span style="color: #ed8936;">↑ 856 MB envoyé</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services Web -->
+            <section class="section">
+                <h2 class="section-title">🌍 Services Web</h2>
+                <div class="web-service">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span class="favicon">🌐</span>
+                        <h3 style="color: #2d3748;">Port 80 (HTTP)</h3>
+                    </div>
+                    <p><strong>Titre:</strong> Page d'accueil - Mon Serveur</p>
+                    <p><strong>Serveur:</strong> Apache/2.4.52 (Debian)</p>
+                    <p><span class="status-badge status-ok">Actif</span></p>
+                </div>
+                <div class="web-service">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span class="favicon">🔒</span>
+                        <h3 style="color: #2d3748;">Port 443 (HTTPS)</h3>
+                    </div>
+                    <p><strong>Titre:</strong> Panneau d'Administration</p>
+                    <p><strong>Serveur:</strong> nginx/1.22.1</p>
+                    <p><span class="status-badge status-ok">Actif</span></p>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
